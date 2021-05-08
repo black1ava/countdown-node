@@ -10,7 +10,7 @@ class CountDown{
   _init = () => {
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 3000);
-    this.camera.position.set(0, 13, 15);
+    this.camera.position.set(0, 10, 40);
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setSize(innerWidth, innerHeight);
     this.renderer.shadowMap.enabled = true;
@@ -19,11 +19,14 @@ class CountDown{
     
     window.addEventListener('resize', this._onWindowResize, false);
     
+    this.delta = 0;
+    this.gltfIsLoaded = false;
+    
     // this._orbitControls();
-    // this._createPlane();
-    // this._gltfLoader();
-    // this._setUpLight();
-    // this._animate();
+    this._createPlane();
+    this._gltfLoader();
+    this._setUpLight();
+    this._animate();
   }
   
   _createPlane = () => {
@@ -40,14 +43,17 @@ class CountDown{
     loader.setPath('/resource/clock/');
     loader.load('scene.gltf', gltf => {
       this.scene.add(gltf.scene);
-      gltf.scene.children[0].scale.setScalar(0.1);
-      gltf.scene.children[0].traverse(g => g.castShadow = true);
+      this.clock = gltf.scene.children[0];
+      this.clock.scale.setScalar(0.1);
+      this.clock.traverse(g => g.castShadow = true);
+      
+      this.gltfIsLoaded = true;
     });
   }
   
   _setUpLight = () => {
-    const light = new THREE.SpotLight();
-    light.position.set(0, 10, 10);
+    const light = new THREE.SpotLight(null, 1.2);
+    light.position.set(0, 20, 20);
     light.castShadow = true;
     this.scene.add(light);
   }
@@ -64,7 +70,15 @@ class CountDown{
   }
   
   _animate = () => {
+    this.delta += 0.01;
     requestAnimationFrame(this._animate);
+    
+    if(this.gltfIsLoaded){
+      this.camera.position.x = Math.sin(this.delta) * 20;
+      this.camera.position.z = Math.cos(this.delta) * 20;
+      this.camera.lookAt(this.clock.position);
+    }
+    
     this.renderer.render(this.scene, this.camera);
   }
 }
