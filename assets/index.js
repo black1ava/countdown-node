@@ -19,11 +19,11 @@ class CountDown{
     
     window.addEventListener('resize', this._onWindowResize, false);
     
-    this._orbitControls();
-    this._createPlane();
-    this._gltfLoader();
-    this._setUpLight();
-    this._animate();
+    // this._orbitControls();
+    // this._createPlane();
+    // this._gltfLoader();
+    // this._setUpLight();
+    // this._animate();
   }
   
   _createPlane = () => {
@@ -42,8 +42,6 @@ class CountDown{
       this.scene.add(gltf.scene);
       gltf.scene.children[0].scale.setScalar(0.1);
       gltf.scene.children[0].traverse(g => g.castShadow = true);
-      
-      console.log(gltf.animations);
     });
   }
   
